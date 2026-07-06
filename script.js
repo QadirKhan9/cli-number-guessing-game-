@@ -16,23 +16,47 @@ const customTrigger = document.getElementById('customThemeTrigger');
 const customOptions = document.getElementById('customThemeOptions');
 
 function syncCustomToNative(value){
-  // update native select and custom UI
-  if(themeSelect) themeSelect.value = value;
+  const normalizedValue = value || 'frontier';
+  if(themeSelect) themeSelect.value = normalizedValue;
 
   Array.from(customOptions.children).forEach(li=>{
-    const selected = li.dataset.value === value;
+    const selected = li.dataset.value === normalizedValue;
     li.classList.toggle('selected', selected);
     li.setAttribute('aria-selected', selected ? 'true' : 'false');
   });
 
-  const activeId = customOptions.querySelector('.selected')?.id;
+  const activeItem = Array.from(customOptions.children).find(li => li.dataset.value === normalizedValue);
+  const activeId = activeItem?.id;
   if(activeId){ customOptions.setAttribute('aria-activedescendant', activeId); }
 
-  customTrigger.textContent = customOptions.querySelector('.selected')?.textContent || value;
+  if(customTrigger){ customTrigger.textContent = activeItem?.textContent || normalizedValue; }
 }
 
-function closeCustom(){ customTheme.classList.remove('open'); }
-function openCustom(){ customTheme.classList.add('open'); }
+function closeCustom(){
+  if(customTheme){
+    customTheme.classList.remove('open');
+    customTheme.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function openCustom(){
+  if(customTheme){
+    customTheme.classList.add('open');
+    customTheme.setAttribute('aria-expanded', 'true');
+  }
+}
+
+function toggleCustom(){
+  if(customTheme.classList.contains('open')) closeCustom(); else openCustom();
+}
+
+function selectTheme(value){
+  const normalizedValue = value || 'frontier';
+  syncCustomToNative(normalizedValue);
+  applyTheme(normalizedValue);
+  saveTheme(normalizedValue);
+  closeCustom();
+}
 
 let secret, attempts, lives, history;
 
@@ -139,20 +163,27 @@ themeSelect.addEventListener('change', e=>{
 });
 
 // Custom select interactions
-if(customTheme){
+if(customTheme && customTrigger && customOptions){
+  customTrigger.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleCustom();
+  });
+
   customTheme.addEventListener('click', (e)=>{
-    if(customTheme.classList.contains('open')){ closeCustom(); } else { openCustom(); }
+    if(e.target === customTheme){
+      e.stopPropagation();
+      toggleCustom();
+    }
   });
 
   customOptions.addEventListener('click', (e)=>{
-    const li = e.target.closest('li'); if(!li) return;
-    const val = li.dataset.value;
-    syncCustomToNative(val);
-    applyTheme(val); saveTheme(val);
-    closeCustom();
+    const li = e.target.closest('li');
+    if(!li) return;
+
+    e.stopPropagation();
+    selectTheme(li.dataset.value);
   });
 
-  // keyboard support
   customTheme.addEventListener('keydown', (e)=>{
     const focused = customOptions.querySelector('[aria-selected="true"]');
     const items = Array.from(customOptions.querySelectorAll('li'));
@@ -162,12 +193,7 @@ if(customTheme){
       e.preventDefault();
       if(customTheme.classList.contains('open')){
         const selected = items[currentIndex] || items[0];
-        if(selected){
-          const val = selected.dataset.value;
-          syncCustomToNative(val);
-          applyTheme(val); saveTheme(val);
-          closeCustom();
-        }
+        if(selected){ selectTheme(selected.dataset.value); }
       } else {
         openCustom();
       }
@@ -191,8 +217,6 @@ if(customTheme){
       return;
     }
   });
-
-  customTheme.addEventListener('blur', () => { closeCustom(); });
 
   // initialize
   syncCustomToNative(loadTheme());
