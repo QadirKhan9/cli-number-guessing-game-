@@ -75,8 +75,11 @@ function newGame(){
 
 function applyTheme(theme){
   const root = document.documentElement;
+  const normalized = theme || 'frontier';
   root.classList.remove('theme-frontier','theme-ocean','theme-sunset');
-  root.classList.add(`theme-${theme}`);
+  root.classList.add(`theme-${normalized}`);
+  root.setAttribute('data-theme', normalized);
+  document.body.setAttribute('data-theme', normalized);
 }
 
 function loadTheme(){

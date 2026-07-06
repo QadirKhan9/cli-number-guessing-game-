@@ -83,9 +83,9 @@ button.secondary{margin-top:16px;padding:8px 14px;border-radius:8px;border:0;bac
 .theme-ocean .custom-select__options li.selected{background:linear-gradient(90deg, #42c2ff, #7ae7ff)}
 .theme-sunset .custom-select__options li.selected{background:linear-gradient(90deg, #ffa778, #ffdf7a)}
 
-.theme-frontier{--bg-1:#0f1724;--bg-2:#1b1640;--accent:#ffd166;--accent-2:#ff7b7b;--glass:rgba(255,255,255,0.06);--muted:#b8c0d3;}
-.theme-ocean{--bg-1:#041f3f;--bg-2:#0f4065;--accent:#42c2ff;--accent-2:#7ae7ff;--glass:rgba(15,70,130,0.18);--muted:#b3d8ff;}
-.theme-sunset{--bg-1:#3d1a29;--bg-2:#5d2c4b;--accent:#ffa778;--accent-2:#ffdf7a;--glass:rgba(255,255,255,0.12);--muted:#f6d8c4;}
+.theme-frontier,[data-theme="frontier"]{--bg-1:#0f1724;--bg-2:#1b1640;--accent:#ffd166;--accent-2:#ff7b7b;--glass:rgba(255,255,255,0.06);--muted:#b8c0d3;}
+.theme-ocean,[data-theme="ocean"]{--bg-1:#041f3f;--bg-2:#0f4065;--accent:#42c2ff;--accent-2:#7ae7ff;--glass:rgba(15,70,130,0.18);--muted:#b3d8ff;}
+.theme-sunset,[data-theme="sunset"]{--bg-1:#3d1a29;--bg-2:#5d2c4b;--accent:#ffa778;--accent-2:#ffdf7a;--glass:rgba(255,255,255,0.12);--muted:#f6d8c4;}
 
 @media (max-width:980px){
 	.app{padding:28px;align-items:stretch}
